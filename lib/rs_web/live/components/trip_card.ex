@@ -31,7 +31,7 @@ defmodule RsWeb.Live.Components.TripCard do
       >
         <h1 class="mb-2 pb-2 flex items-center">
           <span>
-            <span class={data_point()}>{@trip}</span>
+            <span class={data_point()}>{String.slice(@trip, 0, 12)}</span>
           </span>
           <span
             :if={@trip_values.trip_completed_at == nil}
