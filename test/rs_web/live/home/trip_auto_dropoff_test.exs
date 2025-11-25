@@ -56,6 +56,7 @@ defmodule RsWeb.Live.Home.TripAutoDropoffTest do
         )
 
       values = trip_id |> Journey.load() |> Journey.values()
+      item_to_deliver = values.item_to_deliver
 
       assert pickup_reached,
              "Driver should reach pickup location within allotted time. values: #{inspect(values, pretty: true)}"
@@ -100,7 +101,7 @@ defmodule RsWeb.Live.Home.TripAutoDropoffTest do
         |> element("#waiting-for-customer-#{trip_id}-id")
         |> render()
 
-      assert waiting_customer_badge_html =~ "Waiting for Customer"
+      assert waiting_customer_badge_html =~ "#{item_to_deliver}→🧑‍🦱"
       assert waiting_customer_badge_html =~ "⌛️"
 
       # Step 11: Verify "Handed Off" button exists and is enabled

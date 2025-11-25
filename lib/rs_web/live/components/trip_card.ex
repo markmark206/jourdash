@@ -58,8 +58,7 @@ defmodule RsWeb.Live.Components.TripCard do
             <div class="dropdown dropdown-top inline-block">
               <label tabindex="0">
                 <span class="font-mono badge badge-neutral badge-lg">
-                  <span>{@trip_values.item_to_deliver}</span>
-                  <span>✅</span>
+                  <span>{@trip_values.item_to_deliver}→{if @trip_values.handed_off, do: "🧑‍🦱", else: "🏠"} ✅</span>
                   <span>{format_time_ago(@last_updated_seconds_ago)} ago</span>
                 </span>
               </label>
@@ -79,8 +78,7 @@ defmodule RsWeb.Live.Components.TripCard do
             <div class="dropdown dropdown-left inline-block">
               <label tabindex="0">
                 <span class="font-mono badge badge-neutral badge-lg">
-                  <span>{@trip_values.item_to_deliver}</span>
-                  <span>❌</span>
+                  <span>{@trip_values.item_to_deliver}→🚗 ❌</span>
                   <span>{format_time_ago(@last_updated_seconds_ago)} ago</span>
                 </span>
               </label>
@@ -135,28 +133,28 @@ defmodule RsWeb.Live.Components.TripCard do
         </div>
         <div class="mt-1 pt-1">
           <.button
-            id={"pickup-item-#{@trip}-button-id"}
-            disabled={
-              @trip_values.picked_up == true or @trip_values.waiting_for_food_at_restaurant != true or
-                @trip_values.trip_completed_at != nil
+            :if={
+              @trip_values.waiting_for_food_at_restaurant == true and @trip_values.picked_up != true and
+                @trip_values.waiting_for_food_at_restaurant_timeout == nil
             }
+            id={"pickup-item-#{@trip}-button-id"}
             phx-click="on_pickup_item_button_click"
             phx-value-trip={@trip}
             class="btn btn-sm btn-primary my-2 py-2"
           >
-            <span :if={@trip_values.picked_up == true}>✅</span> Picked Up
+            Picked Up
           </.button>
           <.button
-            id={"drop-off-item-#{@trip}-button-id"}
-            disabled={
-              @trip_values.waiting_for_customer_timer == nil or
-                (@trip_values.handed_off == true or @trip_values.dropped_off == true)
+            :if={
+              @trip_values.waiting_for_customer_at_dropoff == true and @trip_values.handed_off != true and
+                @trip_values.dropped_off != true
             }
+            id={"drop-off-item-#{@trip}-button-id"}
             phx-click="on_handoff_item_button_click"
             phx-value-trip={@trip}
             class="btn btn-sm btn-primary my-2 py-2"
           >
-            <span :if={@trip_values.handed_off == true}>✅</span> Handed Off
+            Handed Off
           </.button>
         </div>
 
@@ -204,12 +202,12 @@ defmodule RsWeb.Live.Components.TripCard do
             id={"waiting-for-food-#{@trip}-id"}
             class="font-mono badge badge-info"
           >
-            <span class="animate-pulse">⌛️</span> Waiting for Food
+            {@trip_values.item_to_deliver}→🚗<span class="animate-pulse">⌛️</span>
           </div>
-          <div :if={@trip_values.picked_up == true} class="dropdown dropdown-top inline-block">
+          <div :if={@trip_values.picked_up == true} id={"picked-up-#{@trip}-id"} class="dropdown dropdown-top inline-block">
             <label tabindex="0">
               <div class="font-mono badge badge-neutral">
-                {@trip_values.item_to_deliver} 🚗
+                {@trip_values.item_to_deliver}→🚗
               </div>
             </label>
             <div tabindex="0" class="dropdown-content z-[1] p-3 shadow bg-base-200 rounded-box mb-1 min-w-[200px]">
@@ -223,9 +221,7 @@ defmodule RsWeb.Live.Components.TripCard do
             class="dropdown dropdown-top inline-block"
           >
             <label tabindex="0">
-              <span class="font-mono badge badge-warning">
-                No Food
-              </span>
+              <span class="font-mono badge badge-neutral">{@trip_values.item_to_deliver}→🚗❌</span>
             </label>
             <div tabindex="0" class="dropdown-content z-[1] p-3 shadow bg-base-200 rounded-box mb-1 min-w-[200px]">
               <p class="text-sm">Food was not provided by restaurant</p>
@@ -240,7 +236,7 @@ defmodule RsWeb.Live.Components.TripCard do
             id={"waiting-for-customer-#{@trip}-id"}
             class="font-mono badge badge-info"
           >
-            <span class="animate-pulse">⌛️</span> Waiting for Customer
+            {@trip_values.item_to_deliver}→🧑‍🦱<span class="animate-pulse">⌛️</span>
           </span>
           <div
             :if={@trip_values.dropped_off == true}
@@ -248,9 +244,7 @@ defmodule RsWeb.Live.Components.TripCard do
             class="dropdown dropdown-top inline-block"
           >
             <label tabindex="0">
-              <span class="font-mono badge badge-neutral">
-                {@trip_values.item_to_deliver} 🏠
-              </span>
+              <span class="font-mono badge badge-neutral">{@trip_values.item_to_deliver}→🏠</span>
             </label>
             <div tabindex="0" class="dropdown-content z-[1] p-3 shadow bg-base-200 rounded-box mb-1 min-w-[200px]">
               <p class="text-sm">The customer did not come out, food dropped off</p>
@@ -262,9 +256,7 @@ defmodule RsWeb.Live.Components.TripCard do
             class="dropdown dropdown-top inline-block"
           >
             <label tabindex="0">
-              <div class="font-mono badge badge-neutral">
-                {@trip_values.item_to_deliver} 🧑‍🦱
-              </div>
+              <div class="font-mono badge badge-neutral">{@trip_values.item_to_deliver}→🧑‍🦱</div>
             </label>
             <div tabindex="0" class="dropdown-content z-[1] p-3 shadow bg-base-200 rounded-box mb-1 min-w-[200px]">
               <p class="text-sm">Handed the food off to the customer</p>
