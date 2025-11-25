@@ -55,6 +55,9 @@ defmodule RsWeb.Live.Home.TripCompletionTest do
           "waiting for driver #{trip_id} to reach pickup"
         )
 
+      values = trip_id |> Journey.load() |> Journey.values()
+      item_to_deliver = values.item_to_deliver
+
       assert pickup_reached, "Driver should reach pickup location within allotted time"
       Logger.info("Driver reached pickup location and is waiting for food")
 
@@ -66,7 +69,7 @@ defmodule RsWeb.Live.Home.TripCompletionTest do
         |> element("#waiting-for-food-#{trip_id}-id")
         |> render()
 
-      assert waiting_badge_html =~ "Waiting for Food"
+      assert waiting_badge_html =~ "#{item_to_deliver}→🚗"
       assert waiting_badge_html =~ "⌛️"
 
       # Step 8: Verify "Picked Up" button exists and is enabled
@@ -92,12 +95,12 @@ defmodule RsWeb.Live.Home.TripCompletionTest do
       Process.sleep(200)
       render(view)
 
-      pickup_button_html_after =
+      picked_up_badge_html =
         view
-        |> element("#pickup-item-#{trip_id}-button-id")
+        |> element("#picked-up-#{trip_id}-id")
         |> render()
 
-      assert pickup_button_html_after =~ "✅"
+      assert picked_up_badge_html =~ "#{item_to_deliver}→🚗"
 
       # Step 11: Wait for driver to reach dropoff location
       Logger.info("Waiting for driver #{trip_id} to reach dropoff location...")
@@ -122,7 +125,7 @@ defmodule RsWeb.Live.Home.TripCompletionTest do
         |> element("#waiting-for-customer-#{trip_id}-id")
         |> render()
 
-      assert waiting_customer_badge_html =~ "Waiting for Customer"
+      assert waiting_customer_badge_html =~ "#{item_to_deliver}→🧑‍🦱"
       assert waiting_customer_badge_html =~ "⌛️"
 
       # Step 13: Verify "Handed Off" button exists and is enabled

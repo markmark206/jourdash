@@ -55,6 +55,9 @@ defmodule RsWeb.Live.Home.TripCancellationTest do
           "waiting for driver #{trip_id} to reach pickup"
         )
 
+      values = trip_id |> Journey.load() |> Journey.values()
+      item_to_deliver = values.item_to_deliver
+
       assert pickup_reached, "Driver should reach pickup location within allotted time"
       Logger.info("Driver reached pickup location and is waiting for food")
 
@@ -66,7 +69,7 @@ defmodule RsWeb.Live.Home.TripCancellationTest do
         |> element("#waiting-for-food-#{trip_id}-id")
         |> render()
 
-      assert waiting_badge_html =~ "Waiting for Food"
+      assert waiting_badge_html =~ "#{item_to_deliver}→🚗"
       assert waiting_badge_html =~ "⌛️"
 
       # Step 8: Verify "Picked Up" button exists and is enabled
@@ -119,7 +122,7 @@ defmodule RsWeb.Live.Home.TripCancellationTest do
         |> element("#no-food-timeout-#{trip_id}-id")
         |> render()
 
-      assert timeout_badge_html =~ "No Food"
+      assert timeout_badge_html =~ "#{item_to_deliver}→🚗❌"
 
       Logger.info("Test completed successfully - trip #{trip_id} was cancelled as expected")
     end
