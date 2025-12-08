@@ -149,3 +149,5 @@ iex(4)> Journey.load("TRIP4Y18GX0H69JDXH3122YM") |> Journey.values()
 * Source code for this application: https://github.com/markmark206/journey-food-delivery
 * Journey docs: https://hexdocs.pm/journey/readme.html
 * Journey codebase: https://github.com/markmark206/journey
+
+  
