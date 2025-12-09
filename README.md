@@ -1,3 +1,10 @@
+## This Repo is Now Archived
+
+This repo is retired / archived, in favor of a more streamlined version -- https://github.com/markmark206/jour_dash
+
+
+--------
+
 ## Delivery Trip Workflow Demo
 
 This example models a basic delivery trip workflow -- driving to pickup location, item pickup, driving to destination, handing off or dropping off the item, payment.
